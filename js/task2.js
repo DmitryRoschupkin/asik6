@@ -192,7 +192,9 @@ $(document).ready(function() {
         const name = $card.attr("data-name");
         const time = $card.attr("data-time");
         const aitu = $card.attr("data-aitu") === "true" ? "AITU Student" : "Not AITU Student";
-        const items = $card.attr("data-items") ? $card.attr("data-items").split(", ").join(", ") : "Nothing";
+
+        const rawItems = $card.attr("data-items");
+        const items = rawItems ? rawItems.split(",").join(", ") : "Nothing";
 
         $("#modal-name").text(name);
         $("#modal-details").html(`
@@ -213,15 +215,17 @@ $(document).ready(function() {
         const $modal = $("#guest-card-modal");
 
         $("#modal-overlay").fadeIn(200);
+
         $modal.css({
+            position: "absolute",
+            transform: "none",
             top: offset.top,
             left: offset.left,
-            width: "50px",
-            height: "50px",
+            width: "60px",
             opacity: 0,
             display: "block"
         }).stop(true).animate({
-            top: $(window).scrollTop() + 100,
+            top: $(window).scrollTop() + 120,
             left: ($(window).width() - 280) / 2,
             width: "280px",
             height: "auto",
