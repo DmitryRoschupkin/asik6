@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Selector Detective with animations</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+<h1>The party, 19:30 - 22:30</h1>
+
+<div class="controls-panel">
+    <h3>Task 1: Case Detective</h3>
+    <div id="case-buttons"></div>
+    <button id="btn-clear" class="btn-clear">Clear / Reset Spotlight</button>
+</div>
+
+<div class="result-bar" id="result-bar">
+    <strong>Result: </strong> <span id="result-text">Select a case to highlight guests.</span>
+</div>
+
+<div class="house" id="house">
+    <div class="floor" data-floor="2">
+        <div class="floor-title">FLOOR 2</div>
+        <div class="rooms-container">
+            <div class="room" id="room-balcony" data-room="balcony">
+                <h2>Balcony</h2>
+                <div class="guests-list"></div>
+            </div>
+            <div class="room" id="room-hall" data-room="hall">
+                <h2>Hall</h2>
+                <div class="guests-list"></div>
+            </div>
+        </div>
+    </div>
+    <div class="floor" data-floor="1">
+        <div class="floor-title">FLOOR 1</div>
+        <div class="rooms-container">
+            <div class="room" id="room-kitchen" data-room="Kitchen">
+                <h2>Kitchen</h2>
+                <div class="guests-list"></div>
+            </div>
+            <div class="room" id="room-livingroom" data-room="livingroom">
+                <h2>Living room</h2>
+                <div class="guests-list"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/task2.js"></script>
+</body>
+</html>
