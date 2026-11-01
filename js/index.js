@@ -2,19 +2,19 @@ const initialPartyData = [
     {
         room: "balcony", floor: 2,
         guests: [
-            { name: "Aigerim", color: "blue", time: "20:45", aitu: true, items: ["bag", "cup", "crumbs"] },
+            { name: "Aigerim", color: "blue", time: "20:45", aitu: true, items: ["cup", "crumbs"] },
             { name: "Aliya", color: "yellow", time: "21:15", aitu: false, items: ["phone", "cup"] },
-            { name: "Madina", color: "green", time: "22:10", aitu: false, items: ["phone", "bag"] },
+            { name: "Madina", color: "green", time: "22:10", aitu: false, items: ["phone", "bag", "crumbs"] },
             { name: "Ivan", color: "blue", time: "20:10", aitu: true, items: ["phone"] }
         ]
     },
     {
         room: "hall", floor: 2,
         guests: [
-            { name: "Arman", color: "yellow", time: "20:35", aitu: false, items: ["glasses", "cup"] },
+            { name: "Arman", color: "yellow", time: "20:35", aitu: false, items: ["glasses", "bag"] },
             { name: "Sophia", color: "purple", time: "21:20", aitu: true, items: ["phone"] },
             { name: "Dias", color: "blue", time: "19:45", aitu: true, items: [] },
-            { name: "Bekzat", color: "purple", time: "20:55", aitu: false, items: ["bag", "cup", "glasses"] },
+            { name: "Bekzat", color: "purple", time: "20:55", aitu: false, items: ["bag", "cup", "crumbs"] },
             { name: "Aruzhan", color: "blue", time: "21:50", aitu: true, items: ["phone"] },
             { name: "Saule", color: "green", time: "21:25", aitu: false, items: ["glasses"] }
         ]
@@ -23,9 +23,9 @@ const initialPartyData = [
         room: "kitchen", floor: 1,
         guests: [
             { name: "Nurlan", color: "red", time: "19:40", aitu: true, items: ["phone", "cup"] },
-            { name: "Emma", color: "red", time: "20:15", aitu: false, items: ["phone"] },
-            { name: "Timur", color: "green", time: "21:05", aitu: true, items: ["phone", "bag"] },
-            { name: "Sergey", color: "orange", time: "20:50", aitu: true, items: ["cup"] },
+            { name: "Emma", color: "red", time: "20:15", aitu: false, items: ["bag"] },
+            { name: "Timur", color: "green", time: "21:05", aitu: true, items: ["phone", "bag", "crumbs"] },
+            { name: "Sergey", color: "orange", time: "20:50", aitu: true, items: [] },
             { name: "Yerlan", color: "pink", time: "21:40", aitu: true, items: ["glasses", "phone"] },
             { name: "Kamila", color: "black", time: "20:05", aitu: false, items: ["cup"] }
         ]
@@ -34,8 +34,8 @@ const initialPartyData = [
         room: "livingroom", floor: 1,
         guests: [
             { name: "Daniel", color: "blue", time: "19:55", aitu: true, items: ["glasses"] },
-            { name: "Zarina", color: "purple", time: "21:10", aitu: false, items: ["bag", "cup", "phone"] },
-            { name: "Natasha", color: "yellow", time: "20:30", aitu: true, items: ["glasses", "phone"] },
+            { name: "Zarina", color: "purple", time: "21:10", aitu: false, items: ["bag", "crumbs", "phone"] },
+            { name: "Natasha", color: "yellow", time: "20:30", aitu: true, items: [] },
             { name: "Askar", color: "yellow", time: "21:00", aitu: true, items: ["phone"] },
             { name: "Inkar", color: "purple", time: "20:20", aitu: false, items: ["bag"] }
         ]
@@ -126,7 +126,15 @@ const cases = {
         $natasha.fadeOut(600, function() { $(this).remove(); });
         return $natasha;
     },
-    20: () => $('.guest-card[data-name="Aigerim"]')
+    20: () => {
+        return $(".guest-card.has-crumbs:not(.has-cup)").filter(function() {
+            const time = $(this).attr("data-time");
+            const arrivedInTimeWindow = time > "21:00" && time < "21:30";
+            const hasAituNeighbor = $(this).prev(".is-aitu").length > 0 || $(this).next(".is-aitu").length > 0;
+
+            return arrivedInTimeWindow && hasAituNeighbor;
+        });
+    }
 };
 
 $(document).ready(function() {
