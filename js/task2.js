@@ -185,4 +185,115 @@ $(document).ready(function() {
         $(".guest-card, .room").removeClass("highlight").stop(true).fadeTo(300, 1);
         $("#result-text").text("Cleared spotlight.")
     });
+
+    $(document).on("click", ".guest-card", function(e) {
+        e.stopPropagation();
+        const $card = $(this);
+        const name = $card.attr("data-name");
+        const time = $card.attr("data-time");
+        const aitu = $card.attr("data-aitu") === "true" ? "AITU Student" : "Not AITU Student";
+        const items = $card.attr("data-items") ? $card.attr("data-items").split(", ").join(", ") : "Nothing";
+
+        $("#modal-name").text(name);
+        $("#modal-details").html(`
+            <p><strong>Arrival:</strong> Came at ${time}</p>
+            <p><strong>Status:</strong>${aitu}</p>
+            <p><strong>Items:</strong> Has ${items}</p>
+        `);
+
+        const currentRoom = $card.closest(".room").attr("data-room");
+        const rooms = ["balcony", "hall", "kitchen", "livingroom"];
+        $("#move-buttons").empty();
+
+        rooms.filter(r => r!== currentRoom).forEach(r => {
+            $("#move-buttons").append(`<button class="btn-move" data-target="${r}" data-name="${name}">Move to ${r}</button>`);
+        });
+
+        const offset = $card.offset();
+        const $modal = $("#guest-card-modal");
+
+        $("#modal-overlay").fadeIn(200);
+        $modal.css({
+            top: offset.top,
+            left: offset.left,
+            width: "50px",
+            height: "50px",
+            opacity: 0,
+            display: "block"
+        }).stop(true).animate({
+            top: $(window).scrollTop() + 100,
+            left: ($(window).width() - 280) / 2,
+            width: "280px",
+            height: "auto",
+            opacity: 1,
+        }, 300);
+    });
+
+    function closeModal() {
+        $("#guest-card-modal").stop(true).animate({ opacity: 0 }, 200, function() {
+            $(this).hide();
+            $("#modal-overlay").fadeOut(100);
+        });
+    }
+
+    $("#modal-overlay").on("click", function(e) {
+        if ($(e.target).is("#modal-overlay")) closeModal();
+    });
+
+    $(document).on("keydown", function(e) {
+        if (e.key === "Escape") closeModal();
+    });
+
+    $(document).on("click", ".btn-move", function() {
+        const name = $(this).data("name");
+        const targetRoom = $(this).data("target");
+        const $guestCard = $(`.guest-card[data-name="${name}"]`);
+        const $targetList = $(`#room-${targetRoom} .guests-list`);
+
+        closeModal();
+
+        const startPos = $guestCard.offset();
+        const $clone = $guestCard.clone().appendTo("body").css({
+            position: "absolute",
+            top: startPos.top,
+            left: startPos.left,
+            zIndex: 2000
+        });
+
+        $guestCard.css("opacity", 0);
+
+        const endPos = $targetList.offset();
+
+        $clone.stop(true).animate({
+            top: endPos.top,
+            left: endPos.left
+        }, 600, function() {
+            $clone.remove();
+            $guestCard.appendTo($targetList).css("opacity", 1);
+        });
+    });
+
+    $(document).on("click", ".btn-sort", function() {
+        const roomName = $(this).data("room");
+        const $list = $(`#room-${roomName} .guests-list`);
+        const $cards = $list.children(".guest-card").get();
+
+        let isSorted = true;
+        for (let i = 0; i < $cards.length - 1; i++) {
+            if ($($cards[i]).attr("data-time") > $($cards[i+1]).attr("data-time")) {
+                isSorted = false;
+                break;
+            }
+        }
+
+        $cards.sort((a, b) => {
+            const tA = $(a).attr("data-time");
+            const tB = $(b).attr("data-time");
+            return isSorted ? 0 : tA.localeCompare(tB);
+        });
+
+        $.each($cards, function(idx, item) {
+            $list.append(item);
+        });
+    });
 });
